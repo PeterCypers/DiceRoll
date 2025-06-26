@@ -3,9 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Document</title>
+  <title>DiceRoll</title>
+  <link rel="stylesheet" href="css/main.css">
 </head>
 <body>
-  
+  <main>
+    <h1>Dice Roll</h1>
+
+    <label for="bgc_select">Background color:</label>
+    <select name="bgc_select" id="bgc_select">
+      <option value="white">White</option>
+      <option value="purple">Purple</option>
+      <option value="mercedes">Mercedes</option>
+      <option value="audi">Audi</option>
+    </select>
+
+    <br>
+
+    <label for="dicecount_select">Amount of dice:</label>
+    <select name="dicecount_select" id="dicecount_select">
+      <option value="1">1</option>
+      <option value="2">2</option>
+      <option value="3">3</option>
+      <option value="4">4</option>
+      <option value="5">5</option>
+      <option value="6">6</option>
+    </select>
+
+    <br>
+
+    <label for="dicecolor_select">Dice color:</label>
+    <select name="dicecolor_select" id="dicecolor_select">
+      <option value="red">red</option>
+      <option value="white">white</option>
+      <option value="black">black</option>
+    </select>
+
+    <div id="dice_container">
+
+    </div>
+  </main>
+
+  <script src="js/main.js"></script>
 </body>
 </html>
