@@ -1,6 +1,9 @@
 you can set how many dice you want to roll
 
-there is a short animation of the dice rolling
+you can choose dice style
 
-additionally: you can choose dice style
+you can set a background color
 
+first make sure the dice can change
+
+eventually: there is a short animation of the dice rolling
