@@ -35,11 +35,13 @@ class DiceCollection {
   diceCount;
   diceColor;
   bgc;
+  diceSize;
 
-  constructor(diceCount, diceColor, bgc) {
+  constructor(diceCount, diceColor, bgc, diceSize) {
     this.diceCount = diceCount;
     this.diceColor = diceColor;
     this.bgc = bgc;
+    this.diceSize = diceSize;
     this.initDice();
     this.toHtml();
   }
@@ -70,6 +72,11 @@ class DiceCollection {
     this.toHtml();
   }
 
+  setDiceSize(newDiceSize) {
+    this.diceSize = newDiceSize;
+    this.toHtml();
+  }
+
   toHtml() {
     const DICE_AREA = document.getElementById("dice_container");
     DICE_AREA.innerHTML = "";
@@ -78,20 +85,41 @@ class DiceCollection {
       const dieContainer = document.createElement("div");
       dieContainer.classList.add("die_container");
       dieContainer.classList.add(this.bgc);
-      dieContainer.innerHTML = `<img src="${die.image}" alt="a ${die.color} die with ${die.eyes} eye(s)">`;
+      dieContainer.innerHTML = `<img src="${die.image}" alt="a ${die.color} die with ${die.eyes} eye(s)" class="${this.diceSize}">`;
 
       DICE_AREA.append(dieContainer);
     });
   }
 }
 
+// slider values(also in storage) differ from visible feedback number value
+function calculatedVisibleSize(value) {
+  if(value.length == 1){
+    return value;
+  }
+  let firstNumber = Number(value[0]);
+  let secondNumber = Number(value[1]);
+  return String(firstNumber + secondNumber);
+}
+
 // happens initially, and every time the color is chosen
 function initDice() {
+    const SIZEMAP = new Map([
+    ["1", "xxs"],
+    ["11", "xs"],
+    ["21", "s"],
+    ["31", "m"],
+    ["41", "l"],
+    ["51", "xl"],
+    ["61", "xxl"],
+  ]);
   const DICE_COLOR = document.getElementById("dicecolor_select").value; // get color from the select option
   const DICE_COUNT = document.getElementById("dicecount_select").value; // get dice-count from the select option
   const BGC = document.getElementById("bgc_select").value;
+  const SLIDER_VALUE = document.getElementById("dice_size_slider").value;
+  const DICE_SIZE = calculatedVisibleSize(SIZEMAP.get(SLIDER_VALUE));
 
-  return new DiceCollection(DICE_COUNT, DICE_COLOR, BGC);
+  return new DiceCollection(DICE_COUNT, DICE_COLOR, BGC, DICE_SIZE);
 }
 
 // when any change happens (color/dicecount)
@@ -117,13 +145,27 @@ function changeBGC(color) {
   MAIN_ELEMENT.classList.add(color);
 }
 
-function calculatedVisibleSize(value) {
-  if(value.length == 1){
-    return value;
-  }
-  let firstNumber = Number(value[0]);
-  let secondNumber = Number(value[1]);
-  return String(firstNumber + secondNumber);
+/**
+ * expect parameter values: ["1", "11", "21", "31", "41", "51", "61"]
+ * translates and adds the translation to classlist for styling
+ */
+function resizeDiceImages(size) {
+  const SIZEMAP = new Map([
+    ["1", "xxs"],
+    ["11", "xs"],
+    ["21", "s"],
+    ["31", "m"],
+    ["41", "l"],
+    ["51", "xl"],
+    ["61", "xxl"],
+  ]);
+  const TRANSLATED_SIZE = SIZEMAP.get(size);
+
+  const IMAGES = document.querySelectorAll("img");
+  IMAGES.forEach(image => {
+    resetClasslist(image);
+    image.classList.add(TRANSLATED_SIZE);
+  });
 }
 
 function initSlider() {
@@ -132,12 +174,14 @@ function initSlider() {
   var slider = document.getElementById("dice_size_slider");
   var output = document.getElementById("size_feedback");
   output.innerHTML = calculatedVisibleSize(slider.value); // Display the default slider value
+  resizeDiceImages(slider.value);
 
   // Update the current slider value (each time you drag the slider handle)
   slider.oninput = function() {
     output.innerHTML = calculatedVisibleSize(this.value);
     SAVEDSTATE["dice_size"] = this.value;
     setToStorage(SAVEDSTATE);
+    resizeDiceImages(slider.value);
   }
 }
 
@@ -184,9 +228,10 @@ function init() {
   DICE_COUNT_SELECT.value = SAVEDSTATE["dice_count"];
   SLIDER.value = SAVEDSTATE["dice_size"];
 
+  const diceCollection = initDice();
+
   initSlider();
   initMainBGC();
-  const diceCollection = initDice();
 
   //set change behavior for all select options
   BGC_SELECT.onchange = () => {
@@ -194,20 +239,17 @@ function init() {
     MAIN_ELEMENT.classList.add(BGC_SELECT.value);
     diceCollection.setBGC(BGC_SELECT.value);
     SAVEDSTATE["background_color"] = BGC_SELECT.value;
-    // STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
     setToStorage(SAVEDSTATE);
     changeBGC(BGC_SELECT.value);
   }
   DICE_COLOR_SELECT.onchange = () => {
     diceCollection.setDiceColor(DICE_COLOR_SELECT.value);
     SAVEDSTATE["dice_color"] = DICE_COLOR_SELECT.value;
-    // STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
     setToStorage(SAVEDSTATE);
   }
   DICE_COUNT_SELECT.onchange = () => {
     diceCollection.setDiceCount(DICE_COUNT_SELECT.value);
     SAVEDSTATE["dice_count"] = DICE_COUNT_SELECT.value;
-    // STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
     setToStorage(SAVEDSTATE);
   }
 }
