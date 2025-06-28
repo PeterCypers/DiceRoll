@@ -29,11 +29,21 @@ main{
 #dice_container{
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 
 .die_container{
   padding: 5px;
 }
+
+/* variable image sizes set at resizeDiceImages() */
+.xxs{ width: 10vw; }
+.xs{ width: 15vw; }
+.s{ width: 20vw; }
+.m{ width: 25vw; }
+.l{ width: 30vw; }
+.xl{ width: 35vw; }
+.xxl{ width: 75vw; }
 
 #size_feedback{
   margin-left: 5px;
