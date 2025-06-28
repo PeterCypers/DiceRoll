@@ -1,0 +1,13 @@
+this code fragment should show a slider with markers, but I think the css is overwriting it somehow
+see: 
+https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/input/range
+
+<label for="dice_size_slider">Dice Size:</label><br />
+<input type="range" min="1" max="61" value="30" class="slider" step="10" list="markers" name="dice_size_slider" id="dice_size_slider">
+<datalist id="markers">
+  <option value="0"></option>
+  <option value="25"></option>
+  <option value="50"></option>
+  <option value="75"></option>
+  <option value="100"></option>
+</datalist>
