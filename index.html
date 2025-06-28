@@ -10,34 +10,33 @@
   <main>
     <h1>Dice Roll</h1>
 
-    <label for="bgc_select">Background color:</label>
-    <select name="bgc_select" id="bgc_select">
-      <option value="white">White</option>
-      <option value="purple">Purple</option>
-      <option value="mercedes">Mercedes</option>
-      <option value="audi">Audi</option>
-    </select>
-
-    <br>
-
-    <label for="dicecount_select">Amount of dice:</label>
-    <select name="dicecount_select" id="dicecount_select">
-      <option value="1">1</option>
-      <option value="2">2</option>
-      <option value="3">3</option>
-      <option value="4">4</option>
-      <option value="5">5</option>
-      <option value="6">6</option>
-    </select>
-
-    <br>
-
-    <label for="dicecolor_select">Dice color:</label>
-    <select name="dicecolor_select" id="dicecolor_select">
-      <option value="red">red</option>
-      <option value="white">white</option>
-      <option value="black">black</option>
-    </select>
+    <div id="dice_options" class="hidden">
+      <label for="bgc_select">Background color:</label>
+      <select name="bgc_select" id="bgc_select">
+        <option value="white">White</option>
+        <option value="purple">Purple</option>
+        <option value="blue">Blue</option>
+        <option value="audi">Audi</option>
+      </select>
+      <br>
+      <label for="dicecount_select">Amount of dice:</label>
+      <select name="dicecount_select" id="dicecount_select">
+        <option value="1">1</option>
+        <!-- just for testing, should come from localstorage -->
+        <option value="2" selected>2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+      </select>
+      <br>
+      <label for="dicecolor_select">Dice color:</label>
+      <select name="dicecolor_select" id="dicecolor_select">
+        <option value="red">red</option>
+        <option value="white">white</option>
+        <option value="black">black</option>
+      </select>
+    </div>
 
     <div id="dice_container">
 
