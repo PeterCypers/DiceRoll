@@ -71,8 +71,8 @@ class DiceCollection {
   }
 
   toHtml() {
-    const diceArea = document.getElementById("dice_container");
-    diceArea.innerHTML = "";
+    const DICE_AREA = document.getElementById("dice_container");
+    DICE_AREA.innerHTML = "";
 
     this.dice.forEach(die => {
       const dieContainer = document.createElement("div");
@@ -80,18 +80,18 @@ class DiceCollection {
       dieContainer.classList.add(this.bgc);
       dieContainer.innerHTML = `<img src="${die.image}" alt="a ${die.color} die with ${die.eyes} eye(s)">`;
 
-      diceArea.append(dieContainer);
+      DICE_AREA.append(dieContainer);
     });
   }
 }
 
 // happens initially, and every time the color is chosen
 function initDice() {
-  let testColor = "red"; // get color from the select option
-  let testDiceCount = 2; // get dice-count from the select option
-  let bgc = "white";
+  const DICE_COLOR = document.getElementById("dicecolor_select").value; // get color from the select option
+  const DICE_COUNT = document.getElementById("dicecount_select").value; // get dice-count from the select option
+  const BGC = document.getElementById("bgc_select").value;
 
-  return new DiceCollection(testDiceCount, testColor, bgc);
+  return new DiceCollection(DICE_COUNT, DICE_COLOR, BGC);
 }
 
 // when any change happens (color/dicecount)
@@ -104,41 +104,69 @@ function resetClasslist(element) {
 }
 
 function initMainBGC() {
-  // TODO get bgc from localstorage
-  const color = "white";
-  const mainElement = document.getElementsByTagName("main")[0];
-  resetClasslist(mainElement); //remove all existing colors with spread operator to access all elements in classlist
-  mainElement.classList.add(color);
+  const STORAGE_KEY = "dice_roll";
+  const STORAGE = localStorage;
+  const SAVEDSTATE = JSON.parse(STORAGE.getItem(STORAGE_KEY));
+  const COLOR = SAVEDSTATE.background_color;
+  const MAIN_ELEMENT = document.getElementsByTagName("main")[0];
+  resetClasslist(MAIN_ELEMENT); //remove all existing colors with spread operator to access all elements in classlist
+  MAIN_ELEMENT.classList.add(COLOR);
 }
 
-function changeBGC() {
-  // TODO get bgc from localstorage
+function changeBGC(color) {
+  const MAIN_ELEMENT = document.getElementsByTagName("main")[0];
+  resetClasslist(MAIN_ELEMENT); //remove all existing colors with spread operator to access all elements in classlist
+  MAIN_ELEMENT.classList.add(color);
 }
+
 
 function init() {
-  const mainElement = document.getElementsByTagName("main")[0];
+  const STORAGE_KEY = "dice_roll";
+  const STORAGE = localStorage;
+  const MAIN_ELEMENT = document.getElementsByTagName("main")[0];
+  const BGC_SELECT = document.getElementById("bgc_select");
+  const DICE_COLOR_SELECT = document.getElementById("dicecolor_select");
+  const DICE_COUNT_SELECT = document.getElementById("dicecount_select");
+
+  /**
+   * Saved values: background color / dice-color / dice-count / TODO: dice size
+   * Not saved: dice eyes
+   */
+  if(!STORAGE.getItem(STORAGE_KEY)) { // Init localstorage
+    const STORAGE_OBJECT = {};
+    STORAGE_OBJECT["background_color"] = BGC_SELECT.value;
+    STORAGE_OBJECT["dice_color"] = DICE_COLOR_SELECT.value;
+    STORAGE_OBJECT["dice_count"] = DICE_COUNT_SELECT.value;
+
+    STORAGE.setItem(STORAGE_KEY, JSON.stringify(STORAGE_OBJECT));
+  }
+  // when we have values in localstorage: set the optionselect to correct values
+  const SAVEDSTATE = JSON.parse(STORAGE.getItem(STORAGE_KEY));
+  BGC_SELECT.value = SAVEDSTATE["background_color"];
+  DICE_COLOR_SELECT.value = SAVEDSTATE["dice_color"];
+  DICE_COUNT_SELECT.value = SAVEDSTATE["dice_count"];
+
   initMainBGC();
-  console.log("testloading");
-  // colors: aliceblue, darkorchid
-  // TODO get color & dicecount from localstorage
-  // TODO elegant use of localstorage with nested fields under "diceroll"
   const diceCollection = initDice();
 
-  const bgcSelect = document.getElementById("bgc_select");
-  bgcSelect.onchange = () => {
-    resetClasslist(mainElement);
-    mainElement.classList.add(bgcSelect.value);
-    diceCollection.setBGC(bgcSelect.value);
+  //set change behavior for all select options
+  BGC_SELECT.onchange = () => {
+    resetClasslist(MAIN_ELEMENT);
+    MAIN_ELEMENT.classList.add(BGC_SELECT.value);
+    diceCollection.setBGC(BGC_SELECT.value);
+    SAVEDSTATE["background_color"] = BGC_SELECT.value;
+    STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
+    changeBGC(BGC_SELECT.value);
   }
-
-  const diceColorSelect = document.getElementById("dicecolor_select");
-  diceColorSelect.onchange = () => {
-    diceCollection.setDiceColor(diceColorSelect.value);
+  DICE_COLOR_SELECT.onchange = () => {
+    diceCollection.setDiceColor(DICE_COLOR_SELECT.value);
+    SAVEDSTATE["dice_color"] = DICE_COLOR_SELECT.value;
+    STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
   }
-
-  const diceCountSelect = document.getElementById("dicecount_select");
-  diceCountSelect.onchange = () => {
-    diceCollection.setDiceCount(diceCountSelect.value);
+  DICE_COUNT_SELECT.onchange = () => {
+    diceCollection.setDiceCount(DICE_COUNT_SELECT.value);
+    SAVEDSTATE["dice_count"] = DICE_COUNT_SELECT.value;
+    STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
   }
 }
 

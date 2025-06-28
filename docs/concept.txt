@@ -4,6 +4,10 @@ you can choose dice style
 
 you can set a background color
 
+slider for dice size(might be complex with various screen sizes)
+
+possible addition: sound effect on-roll
+
 first make sure the dice can change
 
 eventually: there is a short animation of the dice rolling
