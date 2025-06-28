@@ -104,9 +104,7 @@ function resetClasslist(element) {
 }
 
 function initMainBGC() {
-  const STORAGE_KEY = "dice_roll";
-  const STORAGE = localStorage;
-  const SAVEDSTATE = JSON.parse(STORAGE.getItem(STORAGE_KEY));
+  const SAVEDSTATE = getFromStorage();
   const COLOR = SAVEDSTATE.background_color;
   const MAIN_ELEMENT = document.getElementsByTagName("main")[0];
   resetClasslist(MAIN_ELEMENT); //remove all existing colors with spread operator to access all elements in classlist
@@ -119,6 +117,42 @@ function changeBGC(color) {
   MAIN_ELEMENT.classList.add(color);
 }
 
+function calculatedVisibleSize(value) {
+  if(value.length == 1){
+    return value;
+  }
+  let firstNumber = Number(value[0]);
+  let secondNumber = Number(value[1]);
+  return String(firstNumber + secondNumber);
+}
+
+function initSlider() {
+  const SAVEDSTATE = getFromStorage();
+  // https://www.w3schools.com/howto/howto_js_rangeslider.asp
+  var slider = document.getElementById("dice_size_slider");
+  var output = document.getElementById("size_feedback");
+  output.innerHTML = calculatedVisibleSize(slider.value); // Display the default slider value
+
+  // Update the current slider value (each time you drag the slider handle)
+  slider.oninput = function() {
+    output.innerHTML = calculatedVisibleSize(this.value);
+    SAVEDSTATE["dice_size"] = this.value;
+    setToStorage(SAVEDSTATE);
+  }
+}
+
+function getFromStorage(){
+  const STORAGE_KEY = "dice_roll";
+  const STORAGE = localStorage;
+  return JSON.parse(STORAGE.getItem(STORAGE_KEY));
+}
+
+function setToStorage(savestate){
+  const STORAGE_KEY = "dice_roll";
+  const STORAGE = localStorage;
+  STORAGE.setItem(STORAGE_KEY, JSON.stringify(savestate));
+}
+
 
 function init() {
   const STORAGE_KEY = "dice_roll";
@@ -127,6 +161,7 @@ function init() {
   const BGC_SELECT = document.getElementById("bgc_select");
   const DICE_COLOR_SELECT = document.getElementById("dicecolor_select");
   const DICE_COUNT_SELECT = document.getElementById("dicecount_select");
+  const SLIDER = document.getElementById("dice_size_slider");
 
   /**
    * Saved values: background color / dice-color / dice-count / TODO: dice size
@@ -137,15 +172,19 @@ function init() {
     STORAGE_OBJECT["background_color"] = BGC_SELECT.value;
     STORAGE_OBJECT["dice_color"] = DICE_COLOR_SELECT.value;
     STORAGE_OBJECT["dice_count"] = DICE_COUNT_SELECT.value;
+    STORAGE_OBJECT["dice_size"] = SLIDER.value;
 
-    STORAGE.setItem(STORAGE_KEY, JSON.stringify(STORAGE_OBJECT));
+    // STORAGE.setItem(STORAGE_KEY, JSON.stringify(STORAGE_OBJECT));
+    setToStorage(STORAGE_OBJECT);
   }
   // when we have values in localstorage: set the optionselect to correct values
   const SAVEDSTATE = JSON.parse(STORAGE.getItem(STORAGE_KEY));
   BGC_SELECT.value = SAVEDSTATE["background_color"];
   DICE_COLOR_SELECT.value = SAVEDSTATE["dice_color"];
   DICE_COUNT_SELECT.value = SAVEDSTATE["dice_count"];
+  SLIDER.value = SAVEDSTATE["dice_size"];
 
+  initSlider();
   initMainBGC();
   const diceCollection = initDice();
 
@@ -155,18 +194,21 @@ function init() {
     MAIN_ELEMENT.classList.add(BGC_SELECT.value);
     diceCollection.setBGC(BGC_SELECT.value);
     SAVEDSTATE["background_color"] = BGC_SELECT.value;
-    STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
+    // STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
+    setToStorage(SAVEDSTATE);
     changeBGC(BGC_SELECT.value);
   }
   DICE_COLOR_SELECT.onchange = () => {
     diceCollection.setDiceColor(DICE_COLOR_SELECT.value);
     SAVEDSTATE["dice_color"] = DICE_COLOR_SELECT.value;
-    STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
+    // STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
+    setToStorage(SAVEDSTATE);
   }
   DICE_COUNT_SELECT.onchange = () => {
     diceCollection.setDiceCount(DICE_COUNT_SELECT.value);
     SAVEDSTATE["dice_count"] = DICE_COUNT_SELECT.value;
-    STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
+    // STORAGE.setItem(STORAGE_KEY, JSON.stringify(SAVEDSTATE));
+    setToStorage(SAVEDSTATE);
   }
 }
 

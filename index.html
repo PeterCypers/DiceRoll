@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>DiceRoll</title>
   <link rel="stylesheet" href="css/main.css">
+  <link rel="shortcut icon" href="dice/red/red-dice-number-five-20200.svg" type="image/x-icon">
 </head>
 <body>
   <main>
@@ -16,7 +17,6 @@
         <option value="white">White</option>
         <option value="purple">Purple</option>
         <option value="blue">Blue</option>
-        <option value="audi">Audi</option>
       </select>
       <br>
       <label for="dicecount_select">Amount of dice:</label>
@@ -36,6 +36,13 @@
         <option value="white">white</option>
         <option value="black">black</option>
       </select>
+      <div class="slidecontainer">
+        <label for="dice_size_slider">Dice Size:</label><span id="size_feedback"></span><br />
+        <input type="range" min="1" max="61" value="30" class="slider" step="10" name="dice_size_slider" id="dice_size_slider">
+      </div>
+      <!-- <div>
+        <p id="size_feedback"></p>
+      </div> -->
     </div>
 
     <div id="dice_container">

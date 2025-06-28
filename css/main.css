@@ -8,14 +8,18 @@ h1{
 
 #bgc_select,
 #dicecount_select,
-#dicecolor_select{
+#dicecolor_select,
+.slidecontainer{
   margin-bottom: 10px;
+}
+#dice_size_slider{
+  margin-top: 10px;
 }
 
 main{
   padding: 20px;
   max-width: 80vw;
-  max-height: 90vw;
+  /* max-height: 90vw; */
   border: 2px solid;
   border-radius: 15px;
   background-color: #fff;
@@ -24,8 +28,60 @@ main{
 
 #dice_container{
   display: flex;
+  flex-wrap: wrap;
 }
 
-.white{ background-color: white; }
-.purple{ background-color: darkorchid; }
-.blue{ background-color: aliceblue; }
+.die_container{
+  padding: 5px;
+}
+
+#size_feedback{
+  margin-left: 5px;
+}
+
+/* https://www.w3schools.com/howto/howto_js_rangeslider.asp */
+/* slider style */
+.slidecontainer {
+  width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+  -webkit-appearance: none;  /* Override default CSS styles */
+  appearance: none;
+  width: 100%; /* Full-width */
+  height: 25px; /* Specified height */
+  background: #d3d3d3; /* Grey background */
+  outline: none; /* Remove outline */
+  opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+  -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+  transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+  opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb {
+  -webkit-appearance: none; /* Override default look */
+  appearance: none;
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #04AA6D; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+  width: 25px; /* Set a specific slider handle width */
+  height: 25px; /* Slider handle height */
+  background: #04AA6D; /* Green background */
+  cursor: pointer; /* Cursor on hover */
+}
+/* end slider style */
+
+.white{ background-color: aliceblue; }
+.purple{ background-color: mediumpurple; }
+.green{ background-color: cadetblue; }
+.blue{ background-color: cornflowerblue; }
