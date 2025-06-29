@@ -47,6 +47,7 @@ class DiceCollection {
   bgc;
   diceSize;
   diceArea = document.getElementById("dice_container");
+  history = [];
 
   constructor(diceCount, diceColor, bgc, diceSize) {
     this.diceCount = diceCount;
@@ -67,7 +68,22 @@ class DiceCollection {
     }
   }
 
-  rollDice() {}
+  rollDice() {
+    this.dice.forEach((die) => {
+      die.roll();
+    });
+    this.toHtml();
+
+    // after all reroll for visual effect, the final result to the history:
+    this.toHistory();
+  }
+
+  toHistory(){
+    if(this.history.length >= 5) {
+      this.history.shift();
+    }
+    this.history.push(this.dice.map(((die) => die.eyes)));
+  }
 
   setBGC(bgc) {
     this.bgc = bgc;
@@ -208,6 +224,7 @@ function init() {
   const optionContainer = document.getElementById("dice_options");
   const upBtnImg = `<img src="img/arro-up-3100.svg" alt="open/close options">`;
   const downBtnImg = `<img src="img/arrow-down-3101.svg" alt="open/close options"></img>`;
+  const rollBtn = document.getElementById("roll_btn");
 
   /**
    * Saved values: background color / dice-color / dice-count / dice size
@@ -284,6 +301,9 @@ function init() {
       ${upBtnImg}
       `
     }
+  };
+  rollBtn.onclick = () => {
+    diceCollection.rollDice();
   };
 }
 
