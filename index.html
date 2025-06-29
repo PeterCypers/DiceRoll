@@ -46,10 +46,17 @@
         <option value="black">black</option>
       </select>
       <br>
+      <div id="animate_cb_container" class="mb-10">
+        <label for="animate_cb">Animation:</label>
+        <input type="checkbox" name="animate_cb" id="animate_cb">
+      </div>
       <div id="sfx_cb_container" class="mb-10">
         <label for="sfx_cb">Sound effects:</label>
         <input type="checkbox" name="sfx_cb" id="sfx_cb">
       </div>
+      <button id="showhistory_btn" class="mb-10" title="last 5 rolls">
+        Roll History
+      </button>
       <div class="slidecontainer mb-10">
         <label for="dice_size_slider">Dice Size:</label><span id="size_feedback"></span><br />
         <input type="range" min="1" max="61" value="30" class="slider" step="10" name="dice_size_slider" id="dice_size_slider">

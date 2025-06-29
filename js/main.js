@@ -73,16 +73,43 @@ class DiceCollection {
       die.roll();
     });
     this.toHtml();
+    this.toHistory();
+  }
 
+  rollDiceAnimated() {
+    for (let i = 0; i < 8; i++) {
+      setTimeout(() => {
+        this.dice.forEach((die) => {
+          die.roll();
+        });
+        this.toHtml();
+      }, i * 200)
+    }
     // after all reroll for visual effect, the final result to the history:
     this.toHistory();
   }
 
-  toHistory(){
+  toHistory() {
     if(this.history.length >= 5) {
       this.history.shift();
     }
     this.history.push(this.dice.map(((die) => die.eyes)));
+  }
+
+  historyToString() {
+    let retStr = "";
+    for (let i = 0; i < this.history.length; i++) {
+      retStr += `Roll #${i+1} = ${this.history[i]}\n`;
+    }
+    return retStr;
+  }
+
+  showHistory() {
+    if(this.history.length == 0) {
+      alert("No Rolls to display...")
+    }else{
+      alert(this.historyToString());
+    }
   }
 
   setBGC(bgc) {
@@ -145,11 +172,6 @@ function initDice() {
   return new DiceCollection(diceCount, diceColor, bgc, diceSize);
 }
 
-// when any change happens (color/dicecount) //TODO: will this function get used?
-function reloadDice() {
-
-}
-
 function resetClasslist(element) {
   element.classList.remove(...element.classList); //remove all existing colors with spread operator to access all elements in classlist
 }
@@ -195,18 +217,18 @@ function initSlider(diceCollection) {
     output.innerHTML = calculatedVisibleSize(this.value);
     currentState["dice_size"] = this.value;
     setToStorage(currentState);
-    resizeDiceImages(slider.value); // immediate change when manipulating slider
-    diceCollection.setDiceSize(this.value);
+    resizeDiceImages(slider.value); // immediate change when manipulating slider (immediate UI update)
+    diceCollection.setDiceSize(this.value); // update the object values for toHtml() (long term change future UI update)
   }
 }
 
-function getFromStorage(){
+function getFromStorage() {
   const STORAGE_KEY = "dice_roll";
   const STORAGE = localStorage;
   return JSON.parse(STORAGE.getItem(STORAGE_KEY));
 }
 
-function setToStorage(savestate){
+function setToStorage(savestate) {
   const STORAGE_KEY = "dice_roll";
   const STORAGE = localStorage;
   STORAGE.setItem(STORAGE_KEY, JSON.stringify(savestate));
@@ -225,6 +247,8 @@ function init() {
   const upBtnImg = `<img src="img/arro-up-3100.svg" alt="open/close options">`;
   const downBtnImg = `<img src="img/arrow-down-3101.svg" alt="open/close options"></img>`;
   const rollBtn = document.getElementById("roll_btn");
+  const animationCheckbox = document.getElementById("animate_cb");
+  const showHistoryBtn = document.getElementById("showhistory_btn");
 
   /**
    * Saved values: background color / dice-color / dice-count / dice size
@@ -237,6 +261,7 @@ function init() {
     STORAGE_OBJECT["dice_count"] = diceCountSelect.value;
     STORAGE_OBJECT["dice_size"] = slider.value;
     STORAGE_OBJECT["sound_effect"] = sfxCheckbox.checked;
+    STORAGE_OBJECT["animation"] = animationCheckbox.checked;
 
     setToStorage(STORAGE_OBJECT);
   }
@@ -247,6 +272,7 @@ function init() {
   diceCountSelect.value = savedState["dice_count"];
   slider.value = savedState["dice_size"];
   sfxCheckbox.checked = savedState["sound_effect"];
+  animationCheckbox.checked = savedState["animation"];
 
   // initial setup of the dice(container)
   const diceCollection = initDice();
@@ -303,8 +329,25 @@ function init() {
     }
   };
   rollBtn.onclick = () => {
-    diceCollection.rollDice();
+    if (animationCheckbox.checked) {
+      rollBtn.disabled = true;
+      setTimeout(() => {
+        rollBtn.disabled = false;
+      }, 1600)
+      diceCollection.rollDiceAnimated();
+    } else {
+      rollBtn.disabled = false;
+      diceCollection.rollDice();
+    }
   };
+  animationCheckbox.onchange = () => {
+    const currentState = getFromStorage();
+    currentState["animation"] = animationCheckbox.checked;
+    setToStorage(currentState);
+  };
+  showHistoryBtn.onclick = () => {
+    diceCollection.showHistory();
+  }
 }
 
 window.onload = init;
