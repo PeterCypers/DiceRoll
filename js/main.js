@@ -249,6 +249,8 @@ function init() {
   const rollBtn = document.getElementById("roll_btn");
   const animationCheckbox = document.getElementById("animate_cb");
   const showHistoryBtn = document.getElementById("showhistory_btn");
+  // https://stackoverflow.com/questions/1933969/sound-effects-in-javascript-html5
+  const sfx_roll = new Audio("../sfx/Dice Rolling Sound Effect.mp3");
 
   /**
    * Saved values: background color / dice-color / dice-count / dice size
@@ -329,6 +331,9 @@ function init() {
     }
   };
   rollBtn.onclick = () => {
+    if(sfxCheckbox.checked) {
+      sfx_roll.play();
+    }
     if (animationCheckbox.checked) {
       rollBtn.disabled = true;
       setTimeout(() => {
