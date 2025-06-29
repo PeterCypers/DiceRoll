@@ -46,6 +46,7 @@ class DiceCollection {
   diceColor;
   bgc;
   diceSize;
+  diceArea = document.getElementById("dice_container");
 
   constructor(diceCount, diceColor, bgc, diceSize) {
     this.diceCount = diceCount;
@@ -92,8 +93,10 @@ class DiceCollection {
   }
 
   toHtml() {
+    /* redefined as object-field:
     const DICE_AREA = document.getElementById("dice_container");
-    DICE_AREA.innerHTML = "";
+    DICE_AREA.innerHTML = ""; */
+    this.diceArea.innerHTML = "";
 
     this.dice.forEach(die => {
       const dieContainer = document.createElement("div");
@@ -101,7 +104,7 @@ class DiceCollection {
       dieContainer.classList.add(this.bgc);
       dieContainer.innerHTML = `<img src="${die.image}" alt="a ${die.color} die with ${die.eyes} eye(s)" class="${this.diceSize}">`;
 
-      DICE_AREA.append(dieContainer);
+      this.diceArea.append(dieContainer);
     });
   }
 }
@@ -200,6 +203,11 @@ function init() {
   const diceColorSelect = document.getElementById("dicecolor_select");
   const diceCountSelect = document.getElementById("dicecount_select");
   const slider = document.getElementById("dice_size_slider");
+  const sfxCheckbox = document.getElementById("sfx_cb");
+  const optionBtn = document.getElementById("option_btn");
+  const optionContainer = document.getElementById("dice_options");
+  const upBtnImg = `<img src="img/arro-up-3100.svg" alt="open/close options">`;
+  const downBtnImg = `<img src="img/arrow-down-3101.svg" alt="open/close options"></img>`;
 
   /**
    * Saved values: background color / dice-color / dice-count / dice size
@@ -211,16 +219,19 @@ function init() {
     STORAGE_OBJECT["dice_color"] = diceColorSelect.value;
     STORAGE_OBJECT["dice_count"] = diceCountSelect.value;
     STORAGE_OBJECT["dice_size"] = slider.value;
+    STORAGE_OBJECT["sound_effect"] = sfxCheckbox.checked;
 
     setToStorage(STORAGE_OBJECT);
   }
-  // when we have values in localstorage: set the optionselect to correct values
+  // populate the UI with correct values when the page loads
   const savedState = getFromStorage();
   bgcSelect.value = savedState["background_color"];
   diceColorSelect.value = savedState["dice_color"];
   diceCountSelect.value = savedState["dice_count"];
   slider.value = savedState["dice_size"];
+  sfxCheckbox.checked = savedState["sound_effect"];
 
+  // initial setup of the dice(container)
   const diceCollection = initDice();
 
   initSlider(diceCollection);
@@ -238,7 +249,7 @@ function init() {
       setToStorage(currentState);
       changeBGC(bgcSelect.value);
     });
-  }
+  };
   diceColorSelect.onchange = () => {
     requestAnimationFrame(() => {
       const currentState = getFromStorage();
@@ -246,8 +257,7 @@ function init() {
       currentState["dice_color"] = diceColorSelect.value;
       setToStorage(currentState);
     });
-  }
-
+  };
   diceCountSelect.onchange = () => {
     requestAnimationFrame(() => {
       const currentState = getFromStorage();
@@ -255,6 +265,25 @@ function init() {
       currentState["dice_count"] = diceCountSelect.value;
       setToStorage(currentState);
     });
+  };
+  sfxCheckbox.onchange = () => {
+    const currentState = getFromStorage();
+    currentState["sound_effect"] = sfxCheckbox.checked;
+    setToStorage(currentState);
+  };
+  optionBtn.onclick = () => {
+    optionContainer.classList.toggle("hidden");
+    if(optionContainer.classList.contains("hidden")) {
+      optionBtn.innerHTML = `
+      <p>Toggle Options</p>
+      ${downBtnImg}
+      `
+    }else{
+      optionBtn.innerHTML = `
+      <p>Toggle Options</p>
+      ${upBtnImg}
+      `
+    }
   };
 }
 

@@ -6,12 +6,10 @@ h1{
   text-decoration: underline;
 }
 
-#bgc_select,
-#dicecount_select,
-#dicecolor_select,
-.slidecontainer{
+.mb-10{
   margin-bottom: 10px;
 }
+
 #dice_size_slider{
   margin-top: 10px;
 }
@@ -24,6 +22,62 @@ main{
   border-radius: 15px;
   background-color: #fff;
   margin: 0 auto;
+}
+
+#button_container{
+  display: flex;
+  /* justify-content: space-evenly; */
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+#option_btn{
+  display: flex;
+  gap: 10px;
+  height: 30px;
+  align-items: center;
+  margin-right: auto;
+}
+
+#roll_btn{
+  width: 20vw;
+  height: 8vh;
+  margin-right: 30px;
+  margin-bottom: 25px;
+}
+
+#option_btn > img{
+  width: 20px;
+}
+
+.hidden{
+  display: none;
+}
+
+/* https://stackoverflow.com/questions/306924/can-i-change-the-checkbox-size-using-css */
+input[type=checkbox]
+{
+  /* Double-sized Checkboxes */
+  -ms-transform: scale(2); /* IE */
+  -moz-transform: scale(2); /* FF */
+  -webkit-transform: scale(2); /* Safari and Chrome */
+  -o-transform: scale(2); /* Opera */
+  transform: scale(2);
+  padding: 10px;
+  margin-left: 10px;
+}
+
+#sfx_cb_container{   
+    position: relative;
+    display: flex;
+    justify-content: flex-start;
+}
+
+
+@media (width <= 450px) {
+  select{
+    height: 25px;
+  }
 }
 
 #dice_container{
