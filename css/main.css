@@ -1,20 +1,35 @@
-body{
+@import url('https://fonts.googleapis.com/css2?family=Alfa+Slab+One&family=Permanent+Marker&display=swap');
+
+body {
   background-color: lightblue;
 }
 
-h1{
+.permanent-marker-regular {
+  font-family: "Permanent Marker", cursive;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.alfa-slab-one-regular {
+  font-family: "Alfa Slab One", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+
+h1 {
   text-decoration: underline;
 }
 
-.mb-10{
-  margin-bottom: 10px;
+.mb-15 {
+  margin-bottom: 15px;
 }
 
-#dice_size_slider{
+#dice_size_slider {
   margin-top: 10px;
 }
 
-main{
+main {
   padding: 20px;
   max-width: 80vw;
   /* max-height: 90vw; */
@@ -24,14 +39,14 @@ main{
   margin: 0 auto;
 }
 
-#button_container{
+#button_container {
   display: flex;
   /* justify-content: space-evenly; */
   align-items: center;
   flex-wrap: wrap;
 }
 
-#option_btn{
+#option_btn {
   display: flex;
   gap: 10px;
   height: 30px;
@@ -39,18 +54,46 @@ main{
   margin-right: auto;
 }
 
-#roll_btn{
+#roll_btn {
   width: 20vw;
   height: 8vh;
   margin-right: 30px;
   margin-bottom: 25px;
 }
 
-#option_btn > img{
+/* https://www.w3schools.com/howto/howto_css_animate_buttons.asp */
+#roll_btn {
+  padding: 15px 25px;
+  font-size: 24px;
+  text-align: center;
+  cursor: pointer;
+  outline: none;
+  color: #fff;
+  background-color: lightslategray;
+  border: none;
+  border-radius: 15px;
+  box-shadow: 0 9px #999;
+}
+
+#roll_btn:hover {background-color: slategray}
+
+#roll_btn:active {
+  background-color: slategray;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+#roll_btn:disabled {
+  background-color: slategray;
+  box-shadow: 0 5px #666;
+  transform: translateY(4px);
+}
+
+#option_btn > img {
   width: 20px;
 }
 
-.hidden{
+.hidden {
   display: none;
 }
 
@@ -68,7 +111,7 @@ input[type=checkbox]
 }
 
 #sfx_cb_container,
-#animate_cb_container{   
+#animate_cb_container {   
     position: relative;
     display: flex;
     justify-content: flex-start;
@@ -81,7 +124,7 @@ input[type=checkbox]
   }
 }
 
-#dice_container{
+#dice_container {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-evenly;
