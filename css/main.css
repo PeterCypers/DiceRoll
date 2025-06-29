@@ -67,7 +67,8 @@ input[type=checkbox]
   margin-left: 10px;
 }
 
-#sfx_cb_container{   
+#sfx_cb_container,
+#animate_cb_container{   
     position: relative;
     display: flex;
     justify-content: flex-start;
