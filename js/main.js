@@ -250,7 +250,9 @@ function init() {
   const animationCheckbox = document.getElementById("animate_cb");
   const showHistoryBtn = document.getElementById("showhistory_btn");
   // https://stackoverflow.com/questions/1933969/sound-effects-in-javascript-html5
-  const sfx_roll = new Audio("../sfx/Dice Rolling Sound Effect.mp3");
+  // requires special path: from host github's root(projectname)
+  // like project Reminders App: savebase64.js ln.49: "url(/RemindersApp/images/default_background.jpg)"
+  const sfx_roll = new Audio("/DiceRoll/sfx/Dice Rolling Sound Effect.mp3");
 
   /**
    * Saved values: background color / dice-color / dice-count / dice size
