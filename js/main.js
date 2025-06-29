@@ -1,3 +1,13 @@
+const SIZEMAP = new Map([
+  ["1", "xxs"],
+  ["11", "xs"],
+  ["21", "s"],
+  ["31", "m"],
+  ["41", "l"],
+  ["51", "xl"],
+  ["61", "xxl"],
+]);
+
 class Dice {
   #imageList = new Map([
     ['white', ["dice/white/dice-number-one-black-outline-20371.svg", "dice/white/dice-number-two-black-outline-20370.svg", "dice/white/dice-number-three-black-outline-20369.svg", "dice/white/dice-number-four-black-outline-20368.svg", "dice/white/dice-number-five-black-outline-20367.svg", "dice/white/dice-number-six-black-outline-20366.svg"]],
@@ -46,6 +56,9 @@ class DiceCollection {
     this.toHtml();
   }
 
+  /** 
+   * Happens every time the color or eyes need to change (or any field in Dice obj changes)
+  */
   initDice() {
     this.dice = [];
     for (let i = 1; i <= this.diceCount; i++) {
@@ -73,7 +86,8 @@ class DiceCollection {
   }
 
   setDiceSize(newDiceSize) {
-    this.diceSize = newDiceSize;
+    const diceSize = SIZEMAP.get(newDiceSize);
+    this.diceSize = diceSize;
     this.toHtml();
   }
 
@@ -102,27 +116,17 @@ function calculatedVisibleSize(value) {
   return String(firstNumber + secondNumber);
 }
 
-// happens initially, and every time the color is chosen
+// should happen only once: webpage onload: called at init()
 function initDice() {
-    const SIZEMAP = new Map([
-    ["1", "xxs"],
-    ["11", "xs"],
-    ["21", "s"],
-    ["31", "m"],
-    ["41", "l"],
-    ["51", "xl"],
-    ["61", "xxl"],
-  ]);
-  const DICE_COLOR = document.getElementById("dicecolor_select").value; // get color from the select option
-  const DICE_COUNT = document.getElementById("dicecount_select").value; // get dice-count from the select option
-  const BGC = document.getElementById("bgc_select").value;
-  const SLIDER_VALUE = document.getElementById("dice_size_slider").value;
-  const DICE_SIZE = calculatedVisibleSize(SIZEMAP.get(SLIDER_VALUE));
-
-  return new DiceCollection(DICE_COUNT, DICE_COLOR, BGC, DICE_SIZE);
+  const diceColor = document.getElementById("dicecolor_select").value; // get color from the select option
+  const diceCount = document.getElementById("dicecount_select").value; // get dice-count from the select option
+  const bgc = document.getElementById("bgc_select").value;
+  const sliderValue = document.getElementById("dice_size_slider").value;
+  const diceSize = SIZEMAP.get(sliderValue);
+  return new DiceCollection(diceCount, diceColor, bgc, diceSize);
 }
 
-// when any change happens (color/dicecount)
+// when any change happens (color/dicecount) //TODO: will this function get used?
 function reloadDice() {
 
 }
@@ -132,17 +136,17 @@ function resetClasslist(element) {
 }
 
 function initMainBGC() {
-  const SAVEDSTATE = getFromStorage();
-  const COLOR = SAVEDSTATE.background_color;
-  const MAIN_ELEMENT = document.getElementsByTagName("main")[0];
-  resetClasslist(MAIN_ELEMENT); //remove all existing colors with spread operator to access all elements in classlist
-  MAIN_ELEMENT.classList.add(COLOR);
+  const currentState = getFromStorage();
+  const color = currentState.background_color;
+  const mainElement = document.getElementsByTagName("main")[0];
+  resetClasslist(mainElement); //remove all existing colors with spread operator to access all elements in classlist
+  mainElement.classList.add(color);
 }
 
 function changeBGC(color) {
-  const MAIN_ELEMENT = document.getElementsByTagName("main")[0];
-  resetClasslist(MAIN_ELEMENT); //remove all existing colors with spread operator to access all elements in classlist
-  MAIN_ELEMENT.classList.add(color);
+  const mainElement = document.getElementsByTagName("main")[0];
+  resetClasslist(mainElement); //remove all existing colors with spread operator to access all elements in classlist
+  mainElement.classList.add(color);
 }
 
 /**
@@ -150,26 +154,16 @@ function changeBGC(color) {
  * translates and adds the translation to classlist for styling
  */
 function resizeDiceImages(size) {
-  const SIZEMAP = new Map([
-    ["1", "xxs"],
-    ["11", "xs"],
-    ["21", "s"],
-    ["31", "m"],
-    ["41", "l"],
-    ["51", "xl"],
-    ["61", "xxl"],
-  ]);
   const TRANSLATED_SIZE = SIZEMAP.get(size);
 
-  const IMAGES = document.querySelectorAll("img");
-  IMAGES.forEach(image => {
+  const images = document.querySelectorAll("img");
+  images.forEach(image => {
     resetClasslist(image);
     image.classList.add(TRANSLATED_SIZE);
   });
 }
 
-function initSlider() {
-  const SAVEDSTATE = getFromStorage();
+function initSlider(diceCollection) {
   // https://www.w3schools.com/howto/howto_js_rangeslider.asp
   var slider = document.getElementById("dice_size_slider");
   var output = document.getElementById("size_feedback");
@@ -178,10 +172,12 @@ function initSlider() {
 
   // Update the current slider value (each time you drag the slider handle)
   slider.oninput = function() {
+    const currentState = getFromStorage();
     output.innerHTML = calculatedVisibleSize(this.value);
-    SAVEDSTATE["dice_size"] = this.value;
-    setToStorage(SAVEDSTATE);
-    resizeDiceImages(slider.value);
+    currentState["dice_size"] = this.value;
+    setToStorage(currentState);
+    resizeDiceImages(slider.value); // immediate change when manipulating slider
+    diceCollection.setDiceSize(this.value);
   }
 }
 
@@ -199,59 +195,67 @@ function setToStorage(savestate){
 
 
 function init() {
-  const STORAGE_KEY = "dice_roll";
-  const STORAGE = localStorage;
-  const MAIN_ELEMENT = document.getElementsByTagName("main")[0];
-  const BGC_SELECT = document.getElementById("bgc_select");
-  const DICE_COLOR_SELECT = document.getElementById("dicecolor_select");
-  const DICE_COUNT_SELECT = document.getElementById("dicecount_select");
-  const SLIDER = document.getElementById("dice_size_slider");
+  const mainElement = document.getElementsByTagName("main")[0];
+  const bgcSelect = document.getElementById("bgc_select");
+  const diceColorSelect = document.getElementById("dicecolor_select");
+  const diceCountSelect = document.getElementById("dicecount_select");
+  const slider = document.getElementById("dice_size_slider");
 
   /**
-   * Saved values: background color / dice-color / dice-count / TODO: dice size
+   * Saved values: background color / dice-color / dice-count / dice size
    * Not saved: dice eyes
    */
-  if(!STORAGE.getItem(STORAGE_KEY)) { // Init localstorage
+  if(!getFromStorage()) { // Init localstorage
     const STORAGE_OBJECT = {};
-    STORAGE_OBJECT["background_color"] = BGC_SELECT.value;
-    STORAGE_OBJECT["dice_color"] = DICE_COLOR_SELECT.value;
-    STORAGE_OBJECT["dice_count"] = DICE_COUNT_SELECT.value;
-    STORAGE_OBJECT["dice_size"] = SLIDER.value;
+    STORAGE_OBJECT["background_color"] = bgcSelect.value;
+    STORAGE_OBJECT["dice_color"] = diceColorSelect.value;
+    STORAGE_OBJECT["dice_count"] = diceCountSelect.value;
+    STORAGE_OBJECT["dice_size"] = slider.value;
 
-    // STORAGE.setItem(STORAGE_KEY, JSON.stringify(STORAGE_OBJECT));
     setToStorage(STORAGE_OBJECT);
   }
   // when we have values in localstorage: set the optionselect to correct values
-  const SAVEDSTATE = JSON.parse(STORAGE.getItem(STORAGE_KEY));
-  BGC_SELECT.value = SAVEDSTATE["background_color"];
-  DICE_COLOR_SELECT.value = SAVEDSTATE["dice_color"];
-  DICE_COUNT_SELECT.value = SAVEDSTATE["dice_count"];
-  SLIDER.value = SAVEDSTATE["dice_size"];
+  const savedState = getFromStorage();
+  bgcSelect.value = savedState["background_color"];
+  diceColorSelect.value = savedState["dice_color"];
+  diceCountSelect.value = savedState["dice_count"];
+  slider.value = savedState["dice_size"];
 
   const diceCollection = initDice();
 
-  initSlider();
+  initSlider(diceCollection);
   initMainBGC();
 
   //set change behavior for all select options
-  BGC_SELECT.onchange = () => {
-    resetClasslist(MAIN_ELEMENT);
-    MAIN_ELEMENT.classList.add(BGC_SELECT.value);
-    diceCollection.setBGC(BGC_SELECT.value);
-    SAVEDSTATE["background_color"] = BGC_SELECT.value;
-    setToStorage(SAVEDSTATE);
-    changeBGC(BGC_SELECT.value);
+  //requestAnimationFrame should solve some issues on mobile (see md-file in docs)
+  bgcSelect.onchange = () => {
+    requestAnimationFrame(() => {
+      const currentState = getFromStorage();
+      resetClasslist(mainElement);
+      mainElement.classList.add(bgcSelect.value);
+      diceCollection.setBGC(bgcSelect.value);
+      currentState["background_color"] = bgcSelect.value;
+      setToStorage(currentState);
+      changeBGC(bgcSelect.value);
+    });
   }
-  DICE_COLOR_SELECT.onchange = () => {
-    diceCollection.setDiceColor(DICE_COLOR_SELECT.value);
-    SAVEDSTATE["dice_color"] = DICE_COLOR_SELECT.value;
-    setToStorage(SAVEDSTATE);
+  diceColorSelect.onchange = () => {
+    requestAnimationFrame(() => {
+      const currentState = getFromStorage();
+      diceCollection.setDiceColor(diceColorSelect.value);
+      currentState["dice_color"] = diceColorSelect.value;
+      setToStorage(currentState);
+    });
   }
-  DICE_COUNT_SELECT.onchange = () => {
-    diceCollection.setDiceCount(DICE_COUNT_SELECT.value);
-    SAVEDSTATE["dice_count"] = DICE_COUNT_SELECT.value;
-    setToStorage(SAVEDSTATE);
-  }
+
+  diceCountSelect.onchange = () => {
+    requestAnimationFrame(() => {
+      const currentState = getFromStorage();
+      diceCollection.setDiceCount(diceCountSelect.value);
+      currentState["dice_count"] = diceCountSelect.value;
+      setToStorage(currentState);
+    });
+  };
 }
 
 window.onload = init;
