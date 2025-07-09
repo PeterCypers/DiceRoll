@@ -156,6 +156,7 @@ class DiceCollection {
     this.toHtml();
   }
 
+  // attribute aria-selected for accessibility (screen readers)
   toHtml() {
     /* redefined as object-field:
     const DICE_AREA = document.getElementById("dice_container");
@@ -178,8 +179,10 @@ class DiceCollection {
       //init-selected-state
       if(die.selected){
         dieElement.classList.add("die_selected");
+        dieElement.setAttribute('aria-selected', 'true');
       } else {
         dieElement.classList.remove("die_selected");
+        dieElement.setAttribute('aria-selected', 'false');
       }
       //toggle-selected-state
       dieElement.onclick = () => {
@@ -190,10 +193,12 @@ class DiceCollection {
             // dieElement.classList.toggle("die_selected"); // works, but too opaque
             die.selectDie();
             dieElement.classList.add("die_selected");
+            dieElement.setAttribute('aria-selected', 'true');
             //if die is selected: unselect die (set selected: false and remove selected from classlist)
           } else { 
             die.unselectDie();
             dieElement.classList.remove("die_selected");
+            dieElement.setAttribute('aria-selected', 'false');
           }
         }
       };
