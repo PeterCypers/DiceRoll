@@ -17,6 +17,7 @@ class Dice {
   eyes;
   color;
   image;
+  selected = false; // aka yahtzee-frozen
 
   constructor(eyes, color) {
     this.eyes = eyes;
@@ -29,14 +30,28 @@ class Dice {
     this.color = color;
   }
 
+  // class toggling and boolean toggling work, but are too opaque
+  // toggleSelected() {
+  //   this.selected = !this.selected;
+  // }
+  selectDie() {
+    this.selected = true;
+  }
+
+  unselectDie() {
+    this.selected = false;
+  }
+
   setImage(eyes, color) {
     this.image = this.#imageList.get(color)[eyes-1]; //convert eyes to array-index-position with -1
   }
 
   roll() {
-    let newEyes = Math.floor(Math.random() * 6 + 1);
-    this.eyes = newEyes;
-    this.setImage(newEyes, this.color);
+    if(!this.selected){
+      let newEyes = Math.floor(Math.random() * 6 + 1);
+      this.eyes = newEyes;
+      this.setImage(newEyes, this.color);
+    }
   }
 }
 
@@ -47,6 +62,7 @@ class DiceCollection {
   bgc;
   diceSize;
   diceArea = document.getElementById("dice_container");
+  yahtzeeModeCheckbox = document.getElementById("yz_cb");
   history = [];
 
   constructor(diceCount, diceColor, bgc, diceSize) {
@@ -135,18 +151,56 @@ class DiceCollection {
     this.toHtml();
   }
 
+  //we need to redraw the dice when yahtzee mode toggles -> see cb onchange
+  yahtzeeModeDiceRedraw() {
+    this.toHtml();
+  }
+
   toHtml() {
     /* redefined as object-field:
     const DICE_AREA = document.getElementById("dice_container");
     DICE_AREA.innerHTML = ""; */
     this.diceArea.innerHTML = "";
+    const yahtzeeMode = this.yahtzeeModeCheckbox.checked;
 
     this.dice.forEach(die => {
+      // when not in yahtzee mode make sure dice start unselected
+      if (!yahtzeeMode) {
+        die.unselectDie();
+      }
       const dieContainer = document.createElement("div");
       dieContainer.classList.add("die_container");
       dieContainer.classList.add(this.bgc);
-      dieContainer.innerHTML = `<img src="${die.image}" alt="a ${die.color} die with ${die.eyes} eye(s)" class="${this.diceSize}">`;
-
+      const dieElement = document.createElement("img");
+      dieElement.src = `${die.image}`;
+      dieElement.alt = `a ${die.color} die with ${die.eyes} eye(s)`;
+      dieElement.classList.add(`${this.diceSize}`);
+      //init-selected-state
+      if(die.selected){
+        dieElement.classList.add("die_selected");
+      } else {
+        dieElement.classList.remove("die_selected");
+      }
+      //toggle-selected-state
+      dieElement.onclick = () => {
+        if(yahtzeeMode) {
+          // general note: if-else structure necesary over multiple if's -> that would cause 2nd if to eval differently after 1st if has modified the eval-values
+          // if die is not selected: select die (set selected: true and add selected to classlist)
+          if(!die.selected) {
+            // dieElement.classList.toggle("die_selected"); // works, but too opaque
+            die.selectDie();
+            dieElement.classList.add("die_selected");
+            //if die is selected: unselect die (set selected: false and remove selected from classlist)
+          } else { 
+            die.unselectDie();
+            dieElement.classList.remove("die_selected");
+          }
+        }
+      };
+      
+      // innerHTML is insufficient since the addition of an on-click we prefer an 'element' as target to call on-click
+      // dieContainer.innerHTML = `<img src="${die.image}" alt="a ${die.color} die with ${die.eyes} eye(s)" class="${this.diceSize}">`;
+      dieContainer.insertAdjacentElement('beforeend', dieElement);
       this.diceArea.append(dieContainer);
     });
   }
@@ -249,6 +303,7 @@ function init() {
   const rollBtn = document.getElementById("roll_btn");
   const animationCheckbox = document.getElementById("animate_cb");
   const showHistoryBtn = document.getElementById("showhistory_btn");
+  const yahtzeeCheckbox = document.getElementById("yz_cb");
   // https://stackoverflow.com/questions/1933969/sound-effects-in-javascript-html5
   // requires special path: from host github's root(projectname)
   // like project Reminders App: savebase64.js ln.49: "url(/RemindersApp/images/default_background.jpg)"
@@ -266,6 +321,7 @@ function init() {
     STORAGE_OBJECT["dice_size"] = slider.value;
     STORAGE_OBJECT["sound_effect"] = sfxCheckbox.checked;
     STORAGE_OBJECT["animation"] = animationCheckbox.checked;
+    STORAGE_OBJECT["yahtzee"] = yahtzeeCheckbox.checked;
 
     setToStorage(STORAGE_OBJECT);
   }
@@ -277,6 +333,7 @@ function init() {
   slider.value = savedState["dice_size"];
   sfxCheckbox.checked = savedState["sound_effect"];
   animationCheckbox.checked = savedState["animation"];
+  yahtzeeCheckbox.checked = savedState["yahtzee"];
 
   // initial setup of the dice(container)
   const diceCollection = initDice();
@@ -352,9 +409,15 @@ function init() {
     currentState["animation"] = animationCheckbox.checked;
     setToStorage(currentState);
   };
+  yahtzeeCheckbox.onchange = () => {
+    const currentState = getFromStorage();
+    diceCollection.yahtzeeModeDiceRedraw(); //we need to trigger a toHTML to repopulate dice after mode-toggle
+    currentState["yahtzee"] = yahtzeeCheckbox.checked;
+    setToStorage(currentState);
+  };
   showHistoryBtn.onclick = () => {
     diceCollection.showHistory();
-  }
+  };
 }
 
 window.onload = init;

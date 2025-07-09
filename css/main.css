@@ -96,6 +96,11 @@ main {
   display: none;
 }
 
+/* for yahtzee mode */
+.die_selected {
+  opacity: 50%;
+}
+
 /* https://stackoverflow.com/questions/306924/can-i-change-the-checkbox-size-using-css */
 input[type=checkbox]
 {
@@ -109,8 +114,9 @@ input[type=checkbox]
   margin-left: 10px;
 }
 
+#animate_cb_container,
 #sfx_cb_container,
-#animate_cb_container {   
+#yz_cb_container {   
     position: relative;
     display: flex;
     justify-content: flex-start;
