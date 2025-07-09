@@ -22,14 +22,14 @@
     </div>
 
     <div id="dice_options" class="hidden">
-      <label for="bgc_select">Background color:</label>
+      <label for="bgc_select">Background Color:</label>
       <select name="bgc_select" id="bgc_select" class="mb-15">
         <option value="white">White</option>
         <option value="purple">Purple</option>
         <option value="blue">Blue</option>
       </select>
       <br>
-      <label for="dicecount_select">Amount of dice:</label>
+      <label for="dicecount_select">Amount of Dice:</label>
       <select name="dicecount_select" id="dicecount_select" class="mb-15">
         <option value="1">1</option>
         <option value="2">2</option>
@@ -39,7 +39,7 @@
         <option value="6">6</option>
       </select>
       <br>
-      <label for="dicecolor_select">Dice color:</label>
+      <label for="dicecolor_select">Dice Color:</label>
       <select name="dicecolor_select" id="dicecolor_select" class="mb-15">
         <option value="red">red</option>
         <option value="white">white</option>
@@ -51,12 +51,16 @@
         <input type="checkbox" name="animate_cb" id="animate_cb">
       </div>
       <div id="sfx_cb_container" class="mb-15">
-        <label for="sfx_cb">Sound effects:</label>
+        <label for="sfx_cb">Sound Effects:</label>
         <input type="checkbox" name="sfx_cb" id="sfx_cb">
       </div>
       <div id="yz_cb_container" class="mb-15">
         <label for="yz_cb">Yahtzee Mode:</label>
         <input type="checkbox" name="yz_cb" id="yz_cb">
+      </div>
+      <div id="yz_confirm_cb_container" class="mb-15">
+        <label for="yz_confirm_cb">Confirm to Reset?:</label>
+        <input type="checkbox" name="yz_confirm_cb" id="yz_confirm_cb">
       </div>
       <button id="showhistory_btn" class="mb-15" title="last 5 rolls">
         Roll History
@@ -66,6 +70,10 @@
         <input type="range" min="1" max="61" value="30" class="slider" step="10" name="dice_size_slider" id="dice_size_slider">
       </div>
     </div>
+
+    <button id="reset_yahtzee_dice_selection_btn" class="mb-30 mt-15 hidden">
+      Reset Selection
+    </button>
 
     <div id="dice_container">
 

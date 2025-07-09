@@ -281,6 +281,19 @@ function initSlider(diceCollection) {
   }
 }
 
+function toggleYZ_ResetBtn_confirmCbContainer_Visibility(selected) {
+  const yahtzeeSelectResetBtn = document.getElementById("reset_yahtzee_dice_selection_btn");
+  const yahtzeeConfirmResetCheckboxContainer = document.getElementById("yz_confirm_cb_container");
+  if (selected) {
+    yahtzeeSelectResetBtn.classList.remove("hidden");
+    yahtzeeConfirmResetCheckboxContainer.classList.remove("hidden");
+  }
+  if (!selected) {
+    yahtzeeSelectResetBtn.classList.add("hidden");
+    yahtzeeConfirmResetCheckboxContainer.classList.add("hidden");
+  }
+}
+
 function getFromStorage() {
   const STORAGE_KEY = "dice_roll";
   const STORAGE = localStorage;
@@ -309,6 +322,8 @@ function init() {
   const animationCheckbox = document.getElementById("animate_cb");
   const showHistoryBtn = document.getElementById("showhistory_btn");
   const yahtzeeCheckbox = document.getElementById("yz_cb");
+  const yahtzeeConfirmResetCheckbox = document.getElementById("yz_confirm_cb");
+  const yahtzeeSelectResetBtn = document.getElementById("reset_yahtzee_dice_selection_btn");
   // https://stackoverflow.com/questions/1933969/sound-effects-in-javascript-html5
   // requires special path: from host github's root(projectname)
   // like project Reminders App: savebase64.js ln.49: "url(/RemindersApp/images/default_background.jpg)"
@@ -327,6 +342,7 @@ function init() {
     STORAGE_OBJECT["sound_effect"] = sfxCheckbox.checked;
     STORAGE_OBJECT["animation"] = animationCheckbox.checked;
     STORAGE_OBJECT["yahtzee"] = yahtzeeCheckbox.checked;
+    STORAGE_OBJECT["yahtzee_safe_reset"] = yahtzeeConfirmResetCheckbox.checked;
 
     setToStorage(STORAGE_OBJECT);
   }
@@ -339,12 +355,14 @@ function init() {
   sfxCheckbox.checked = savedState["sound_effect"];
   animationCheckbox.checked = savedState["animation"];
   yahtzeeCheckbox.checked = savedState["yahtzee"];
+  yahtzeeConfirmResetCheckbox.checked = savedState["yahtzee_safe_reset"];
 
   // initial setup of the dice(container)
   const diceCollection = initDice();
 
   initSlider(diceCollection);
   initMainBGC();
+  toggleYZ_ResetBtn_confirmCbContainer_Visibility(yahtzeeCheckbox.checked);
 
   //set change behavior for all select options
   //requestAnimationFrame should solve some issues on mobile (see md-file in docs)
@@ -421,11 +439,30 @@ function init() {
   yahtzeeCheckbox.onchange = () => {
     const currentState = getFromStorage();
     diceCollection.yahtzeeModeDiceRedraw(); //we need to trigger a toHTML to repopulate dice after mode-toggle
+    toggleYZ_ResetBtn_confirmCbContainer_Visibility(yahtzeeCheckbox.checked);
     currentState["yahtzee"] = yahtzeeCheckbox.checked;
+    setToStorage(currentState);
+  };
+  yahtzeeConfirmResetCheckbox.onchange = () => {
+    const currentState = getFromStorage();
+    currentState["yahtzee_safe_reset"] = yahtzeeConfirmResetCheckbox.checked;
     setToStorage(currentState);
   };
   showHistoryBtn.onclick = () => {
     diceCollection.showHistory();
+  };
+  yahtzeeSelectResetBtn.onclick = () => {
+    const lockedDiceCollection = document.querySelectorAll('img[aria-selected="true"]');
+
+    if (yahtzeeConfirmResetCheckbox.checked && lockedDiceCollection.length > 0){
+      if (confirm("Reset selection?")) {
+        console.log("dice confirmed unselected");
+        lockedDiceCollection.forEach(el => el.click());
+      }
+    } else {
+        console.log("dice unselected");
+        lockedDiceCollection.forEach(el => el.click());
+    }
   };
 }
 

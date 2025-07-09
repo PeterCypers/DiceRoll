@@ -25,6 +25,14 @@ h1 {
   margin-bottom: 15px;
 }
 
+.mb-30 {
+  margin-bottom: 30px;
+}
+
+.mt-15 {
+  margin-top: 15px;
+}
+
 #dice_size_slider {
   margin-top: 10px;
 }
@@ -86,6 +94,17 @@ main {
   background-color: slategray;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
+}
+
+#reset_yahtzee_dice_selection_btn {
+  padding: 8px;
+  border-radius: 20px;
+}
+#reset_yahtzee_dice_selection_btn:hover {
+  background-color:#e0e0e0;
+}
+#reset_yahtzee_dice_selection_btn:active {
+  background-color: #f8f8f8;
 }
 
 #option_btn > img {
