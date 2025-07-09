@@ -395,7 +395,11 @@ function init() {
     }
   };
   rollBtn.onclick = () => {
-    if(sfxCheckbox.checked) {
+    // a list of rollable(not frozen for yahtzee mode) dice
+    const rollableDiceCollection = document.querySelectorAll('img[aria-selected="false"]');
+
+    // play sound effect when SFX-option turned on AND there are dice that can roll
+    if(sfxCheckbox.checked && rollableDiceCollection.length > 0) {
       sfx_roll.play();
     }
     if (animationCheckbox.checked) {
