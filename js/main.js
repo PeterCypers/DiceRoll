@@ -402,12 +402,12 @@ function init() {
     optionContainer.classList.toggle("hidden");
     if(optionContainer.classList.contains("hidden")) {
       optionBtn.innerHTML = `
-      <p>Toggle Options</p>
+      <p>Options</p>
       ${downBtnImg}
       `
     }else{
       optionBtn.innerHTML = `
-      <p>Toggle Options</p>
+      <p>Options</p>
       ${upBtnImg}
       `
     }
