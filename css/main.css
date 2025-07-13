@@ -19,6 +19,7 @@ body {
 
 h1 {
   text-decoration: underline;
+  margin: 0em 0em 0em 0em;
 }
 
 .mb-15 {
@@ -31,6 +32,10 @@ h1 {
 
 .mt-15 {
   margin-top: 15px;
+}
+
+.mt-30 {
+  margin-top: 30px;
 }
 
 #dice_size_slider {
@@ -66,7 +71,7 @@ main {
   width: 20vw;
   height: 8vh;
   margin-right: 30px;
-  margin-bottom: 25px;
+  /* margin-bottom: 25px; */
 }
 
 /* https://www.w3schools.com/howto/howto_css_animate_buttons.asp */
@@ -94,6 +99,15 @@ main {
   background-color: slategray;
   box-shadow: 0 5px #666;
   transform: translateY(4px);
+}
+
+#yahtzee_extras_container {
+  display: flex;
+  grid-template-columns: 1fr 1fr;
+}
+#yahtzee_extras_container p {
+  margin: 0px 15px;
+  padding: 8px;
 }
 
 #reset_yahtzee_dice_selection_btn {
