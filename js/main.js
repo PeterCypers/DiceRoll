@@ -282,15 +282,18 @@ function initSlider(diceCollection) {
 }
 
 function toggleYZ_ResetBtn_confirmCbContainer_Visibility(selected) {
-  const yahtzeeSelectResetBtn = document.getElementById("reset_yahtzee_dice_selection_btn");
+  const diceContainer = document.getElementById("dice_container");
   const yahtzeeConfirmResetCheckboxContainer = document.getElementById("yz_confirm_cb_container");
+  const yahtzeeExtrasHideableOuterContainer = document.getElementById("hideable_yahtzee_extras_outercontainer");
   if (selected) {
-    yahtzeeSelectResetBtn.classList.remove("hidden");
+    yahtzeeExtrasHideableOuterContainer.classList.remove("hidden");
     yahtzeeConfirmResetCheckboxContainer.classList.remove("hidden");
+    diceContainer.classList.replace("mt-30", "mt-15");
   }
   if (!selected) {
-    yahtzeeSelectResetBtn.classList.add("hidden");
+    yahtzeeExtrasHideableOuterContainer.classList.add("hidden");
     yahtzeeConfirmResetCheckboxContainer.classList.add("hidden");
+    diceContainer.classList.replace("mt-15", "mt-30");
   }
 }
 
@@ -324,6 +327,7 @@ function init() {
   const yahtzeeCheckbox = document.getElementById("yz_cb");
   const yahtzeeConfirmResetCheckbox = document.getElementById("yz_confirm_cb");
   const yahtzeeSelectResetBtn = document.getElementById("reset_yahtzee_dice_selection_btn");
+  const rollCounter = document.getElementById("roll_counter");
   // https://stackoverflow.com/questions/1933969/sound-effects-in-javascript-html5
   // requires special path: from host github's root(projectname)
   // like project Reminders App: savebase64.js ln.49: "url(/RemindersApp/images/default_background.jpg)"
@@ -420,6 +424,12 @@ function init() {
     if(sfxCheckbox.checked && rollableDiceCollection.length > 0) {
       sfx_roll.play();
     }
+    // keep count when we're in yahtzee mode (add one to the current counter)
+    // we also add to the roll-counter only if dice were rolled (not all frozen + click roll dice)
+    if(yahtzeeCheckbox.checked && rollableDiceCollection.length > 0) {
+      let plusOne = parseInt(rollCounter.innerText) + 1;
+      rollCounter.innerText = String(plusOne);
+    }
     if (animationCheckbox.checked) {
       rollBtn.disabled = true;
       setTimeout(() => {
@@ -456,12 +466,12 @@ function init() {
 
     if (yahtzeeConfirmResetCheckbox.checked && lockedDiceCollection.length > 0){
       if (confirm("Reset selection?")) {
-        console.log("dice confirmed unselected");
+        rollCounter.innerText = "0";
         lockedDiceCollection.forEach(el => el.click());
       }
     } else {
-        console.log("dice unselected");
-        lockedDiceCollection.forEach(el => el.click());
+      rollCounter.innerText = "0";
+      lockedDiceCollection.forEach(el => el.click());
     }
   };
 }

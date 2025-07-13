@@ -11,8 +11,8 @@
   <main>
     <h1 class="alfa-slab-one-regular">Dice Roll</h1>
 
-    <div id="button_container">
-    <button id="option_btn" class="mb-15">
+    <div id="button_container" class="mb-15 mt-15">
+    <button id="option_btn">
       <p>Options</p>
       <img src="img/arrow-down-3101.svg" alt="open/close options">
     </button>
@@ -67,15 +67,20 @@
       </button>
       <div class="slidecontainer mb-10">
         <label for="dice_size_slider">Dice Size:</label><span id="size_feedback"></span><br />
-        <input type="range" min="1" max="61" value="30" class="slider" step="10" name="dice_size_slider" id="dice_size_slider">
+        <input type="range" min="1" max="61" value="30" class="slider mb-15" step="10" name="dice_size_slider" id="dice_size_slider">
       </div>
     </div>
 
-    <button id="reset_yahtzee_dice_selection_btn" class="mb-30 mt-15 hidden">
-      Reset Selection
-    </button>
+    <div id="hideable_yahtzee_extras_outercontainer" class="hidden">
+      <div id="yahtzee_extras_container">
+        <button id="reset_yahtzee_dice_selection_btn">
+          Reset Selection
+        </button>
+        <p>Roll: <span id="roll_counter">0</span></p>
+      </div>
+    </div>
 
-    <div id="dice_container">
+    <div id="dice_container" class="mt-15">
 
     </div>
   </main>
